@@ -1,0 +1,53 @@
+version: '3.6'
+services:
+        zoo1:
+                image: zookeeper:latest
+                restart: always
+                hostname: zoo1
+                ports: 
+                        - 22181:2181
+                volumes:
+                        - /home/slga/docker/zk/data/server.1:/data
+                        - /home/slga/docker/zk/datalog/server.1:/datalog
+                environment:
+                        ZOO_MY_ID: 1
+                        ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+                        TZ: Asia/Shanghai
+                networks:
+                        - mynet
+                
+        zoo2:
+                image: zookeeper:latest
+                restart: always
+                hostname: zoo2
+                ports:
+                        - 22182:2181
+                volumes:
+                        - /home/slga/docker/zk/data/server.2:/data
+                        - /home/slga/docker/zk/datalog/server.2:/data
+                environment:
+                        ZOO_MY_ID: 2
+                        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
+                        TZ: Asia/Shanghai
+                networks:
+                        - mynet
+
+        zoo3:
+                image: zookeeper:latest
+                restart: always
+                hostname: zoo3
+                ports:
+                        - 22183:2181
+                volumes:
+                        - /home/slga/docker/zk/data/server.3:/data
+                        - /home/slga/docker/zk/datalog/server.3:/datalog
+                environment:
+                        ZOO_MY_ID: 3
+                        ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
+                        TZ: Asia/Shanghai
+                networks:
+                        - mynet
+
+networks:
+        mynet:
+                external: true
